@@ -35,7 +35,7 @@ application {
     enableTranslation true
     jhiPrefix restaurant
   }
-  entities Etudiant, Formation, Ia
+  entities Menu
 }
 application {
   config {
@@ -52,7 +52,7 @@ application {
     enableTranslation true
     jhiPrefix restaurant
   }
-  entities Etudiant, Formation, Ia
+  entities livraison
 }
 application {
   config {
@@ -69,7 +69,7 @@ application {
     enableTranslation true
     jhiPrefix restaurant
   }
-  entities Etudiant, Formation, Ia
+  entities Livreur
 }
 application {
   config {
@@ -86,7 +86,7 @@ application {
     enableTranslation true
     jhiPrefix restaurant
   }
-  entities Etudiant, Formation, Ia
+  entities Ingredient
 }
 
 application {
@@ -104,7 +104,7 @@ application {
     enableTranslation true
     jhiPrefix restaurant
   }
-  entities Ue, Ip
+  entities Paiement
 }
 
 application {
@@ -122,44 +122,81 @@ application {
     enableTranslation true
     jhiPrefix restaurant
   }
-  entities Salle
+  entities commande
+}
+application {
+  config {
+    baseName service_gestion_utilisateurs
+    applicationType microservice
+    packageName app.service_gestion_utilisateurs
+    authenticationType oauth2
+    buildTool maven
+    prodDatabaseType mysql
+    serverPort 8087
+    cacheProvider ehcache
+    databaseType sql
+    enableHibernateCache true
+    enableTranslation true
+    jhiPrefix restaurant
+  }
+  entities Client, Gestionaire, Livreur
 }
 
-entity Etudiant {
-	codeEtudiant String required,
+entity Livreur {
+	nomComplet String,
+	email String,
+  password String,
+	status String,
+  userId Long
+}
+
+entity Client {
+	nomComplet String,
+	email String,
+  password String,
+	status String,
+  userId Long
+}
+entity Gestionaire {
 	nom String,
 	prenom String,
 	email String,
 	dateNaissaance Instant,
-    userId Long
+  userId Long
 }
 
-entity Formation {
+entity Menu {
+	nom String,
+  description String,
+  listPlat String
+
+}
+
+entity livraison {
+    status String,
+    commandeId Long 
+    livreurId Long
+}
+entity commande {
+    statuscommande String,
+    listecommande String,
+    clientId Long 
+}
+
+entity Paiement {
 	code String,
-	libelle String
+	montantPaiement Integer,
+  statusPaiement String,
+  methodePaiement String
+  commandeId Long 
 }
-
-entity Ia {
-	dateIa LocalDate
-}
-
-entity Ip {
-	dateIp LocalDate,
-    iaId Long required
-}
-
-entity Ue {
+entity Ingredient {
 	code String,
-	libelle String,
-    formationId Long required
+  nomIngredient String,
+  quantite String
+  commandeId Long 
 }
 
-entity Salle {
-	code String,
-	libelle String
-    capacite Integer
-    status Boolean
-}
 
 relationship OneToOne {
     Ia to Etudiant,
@@ -172,9 +209,9 @@ service * with serviceClass
 paginate * with pagination
 
 microservice Etudiant, Formation, Ia with gir
-microservice Ue, Ip with gp
-microservice Salle with edt
-microservice Salle with edt
-microservice Salle with edt
-microservice Salle with edt
-microservice Salle with edt
+microservice Ue, Ip with service_gestion_menus
+microservice Salle with service_gestion_livreurs
+microservice Salle with service_gestion_stocks
+microservice Salle with service_gestion_utilisateurs
+microservice Salle with service_gestion_commandes
+microservice Salle with service_gestion_paiements
